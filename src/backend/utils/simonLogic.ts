@@ -79,7 +79,7 @@ export function extendSequence(currentSequence: Color[]): Color[] {
 // =============================================================================
 
 /**
- * Validate if a player's color input is correct
+ * Validate if a player's color input is correct (used in Step 4+)
  */
 export function validateInput(
   gameState: SimonGameState,
@@ -96,6 +96,28 @@ export function validateInput(
   // Check if color matches the sequence at this index
   const expectedColor = gameState.sequence[inputIndex];
   return color === expectedColor;
+}
+
+/**
+ * Validate an entire submitted sequence (Step 2)
+ */
+export function validateSequence(
+  gameState: SimonGameState,
+  submittedSequence: Color[]
+): boolean {
+  // Check length matches
+  if (submittedSequence.length !== gameState.sequence.length) {
+    return false;
+  }
+  
+  // Check each color in order
+  for (let i = 0; i < gameState.sequence.length; i++) {
+    if (submittedSequence[i] !== gameState.sequence[i]) {
+      return false;
+    }
+  }
+  
+  return true;
 }
 
 // =============================================================================

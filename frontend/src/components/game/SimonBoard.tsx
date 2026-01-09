@@ -16,7 +16,12 @@ interface SimonBoardProps {
   sequence: Color[];
   round: number;
   isShowingSequence: boolean;
-  onColorClick?: (color: Color) => void;
+  isInputPhase: boolean;
+  playerSequence: Color[];
+  canSubmit: boolean;
+  lastResult: { isCorrect: boolean; playerName: string } | null;
+  onColorClick: (color: Color) => void;
+  onSubmit: () => void;
   disabled?: boolean;
 }
 
@@ -77,7 +82,12 @@ export const SimonBoard: React.FC<SimonBoardProps> = ({
   sequence,
   round,
   isShowingSequence,
+  isInputPhase,
+  playerSequence,
+  canSubmit,
+  lastResult,
   onColorClick,
+  onSubmit,
   disabled = false,
 }) => {
   const [activeColor, setActiveColor] = useState<Color | null>(null);
@@ -133,16 +143,25 @@ export const SimonBoard: React.FC<SimonBoardProps> = ({
   
   // Handle color button click
   const handleColorClick = (color: Color) => {
-    if (disabled || isShowingSequence) return;
+    if (disabled || isShowingSequence || !isInputPhase) return;
     
     // Brief visual feedback
     setActiveColor(color);
     setTimeout(() => setActiveColor(null), 200);
     
     // Call parent handler
-    if (onColorClick) {
-      onColorClick(color);
-    }
+    onColorClick(color);
+  };
+  
+  // Get color emoji for display
+  const getColorEmoji = (color: Color): string => {
+    const emojis: Record<Color, string> = {
+      red: '🔴',
+      blue: '🔵',
+      yellow: '🟡',
+      green: '🟢',
+    };
+    return emojis[color];
   };
   
   return (
@@ -155,9 +174,11 @@ export const SimonBoard: React.FC<SimonBoardProps> = ({
         <p className="text-lg text-gray-300">
           {isShowingSequence 
             ? '👀 Watch the sequence!' 
-            : disabled 
-              ? '⏸️ Waiting...' 
-              : '🎮 Your turn!'}
+            : isInputPhase
+              ? '🎮 Your turn!' 
+              : disabled 
+                ? '⏸️ Waiting...' 
+                : '✅ Ready'}
         </p>
       </div>
       
@@ -192,7 +213,66 @@ export const SimonBoard: React.FC<SimonBoardProps> = ({
         />
       </div>
       
-      {/* Sequence Display (for debugging Step 1) */}
+      {/* Player Sequence Display (Step 2) */}
+      {isInputPhase && (
+        <div className="bg-gray-700 rounded-2xl p-4 min-w-[320px]">
+          <h3 className="text-white text-sm font-semibold mb-2 text-center">
+            Your Sequence ({playerSequence.length} of {sequence.length})
+          </h3>
+          <div className="flex justify-center items-center gap-2 min-h-[40px]">
+            {playerSequence.length === 0 ? (
+              <span className="text-gray-400 text-sm">Click colors in order...</span>
+            ) : (
+              playerSequence.map((color, i) => (
+                <span key={i} className="text-3xl">
+                  {getColorEmoji(color)}
+                </span>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+      
+      {/* Submit Button (Step 2) */}
+      {isInputPhase && (
+        <button
+          onClick={onSubmit}
+          disabled={!canSubmit}
+          className={`
+            px-8 py-4 rounded-xl font-bold text-lg
+            transition-all duration-200
+            ${canSubmit 
+              ? 'bg-green-500 hover:bg-green-600 text-white cursor-pointer shadow-lg hover:shadow-xl transform hover:scale-105' 
+              : 'bg-gray-600 text-gray-400 cursor-not-allowed opacity-50'}
+          `}
+        >
+          {canSubmit ? '✅ SUBMIT' : '⏳ Complete the sequence...'}
+        </button>
+      )}
+      
+      {/* Result Display (Step 2) */}
+      {lastResult && (
+        <div className={`
+          rounded-2xl p-6 text-center
+          ${lastResult.isCorrect 
+            ? 'bg-green-500/20 border-2 border-green-500' 
+            : 'bg-red-500/20 border-2 border-red-500'}
+        `}>
+          <div className="text-4xl mb-2">
+            {lastResult.isCorrect ? '✅' : '❌'}
+          </div>
+          <div className="text-white text-xl font-bold">
+            {lastResult.isCorrect ? 'CORRECT!' : 'WRONG!'}
+          </div>
+          <div className="text-gray-300 text-sm mt-1">
+            {lastResult.isCorrect 
+              ? 'Great job! Next round coming...' 
+              : 'Better luck next time!'}
+          </div>
+        </div>
+      )}
+      
+      {/* Sequence Display (for debugging) */}
       {isShowingSequence && (
         <div className="text-center text-gray-400 text-sm">
           Sequence: {sequence.map((c, i) => (

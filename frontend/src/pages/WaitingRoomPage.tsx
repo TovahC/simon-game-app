@@ -21,10 +21,16 @@ export function WaitingRoomPage() {
     isGameActive, 
     currentSequence, 
     currentRound, 
-    isShowingSequence, 
+    isShowingSequence,
+    isInputPhase,
+    playerSequence,
+    canSubmit,
+    lastResult,
     message,
     initializeListeners,
     cleanup,
+    addColorToSequence,
+    submitSequence,
   } = useSimonStore();
   
   const [roomStatus, setRoomStatus] = useState<'waiting' | 'countdown' | 'active'>('waiting');
@@ -112,7 +118,17 @@ export function WaitingRoomPage() {
             sequence={currentSequence}
             round={currentRound}
             isShowingSequence={isShowingSequence}
-            disabled={true} // Step 1: no input yet
+            isInputPhase={isInputPhase}
+            playerSequence={playerSequence}
+            canSubmit={canSubmit}
+            lastResult={lastResult}
+            onColorClick={addColorToSequence}
+            onSubmit={() => {
+              if (gameCode && playerId) {
+                submitSequence(gameCode, playerId);
+              }
+            }}
+            disabled={false}
           />
           
           {/* Message Display */}

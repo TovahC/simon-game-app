@@ -19,6 +19,17 @@ interface SimonStore {
   currentSequence: Color[];
   currentRound: number;
   
+  // Input phase state
+  isInputPhase: boolean;
+  playerSequence: Color[];
+  canSubmit: boolean;
+  
+  // Result state
+  lastResult: {
+    isCorrect: boolean;
+    playerName: string;
+  } | null;
+  
   // UI state
   message: string;
   isGameActive: boolean;
@@ -27,6 +38,9 @@ interface SimonStore {
   initializeListeners: () => void;
   cleanup: () => void;
   resetGame: () => void;
+  addColorToSequence: (color: Color) => void;
+  submitSequence: (gameCode: string, playerId: string) => void;
+  clearPlayerSequence: () => void;
 }
 
 // =============================================================================
@@ -39,6 +53,10 @@ export const useSimonStore = create<SimonStore>((set) => ({
   isShowingSequence: false,
   currentSequence: [],
   currentRound: 1,
+  isInputPhase: false,
+  playerSequence: [],
+  canSubmit: false,
+  lastResult: null,
   message: 'Waiting for game to start...',
   isGameActive: false,
   
@@ -77,7 +95,36 @@ export const useSimonStore = create<SimonStore>((set) => ({
       
       set({
         isShowingSequence: false,
-        message: 'Sequence complete! Next round coming...',
+        message: 'Get ready to repeat the sequence...',
+      });
+    });
+    
+    // Listen for input phase (Step 2)
+    socket.on('simon:input_phase', (data: { round: number }) => {
+      console.log('🎮 Input phase started:', data);
+      
+      set({
+        isInputPhase: true,
+        playerSequence: [],
+        canSubmit: false,
+        lastResult: null,
+        message: 'Your turn! Click the colors in order',
+      });
+    });
+    
+    // Listen for result (Step 2)
+    socket.on('simon:result', (data: { playerId: string; playerName: string; isCorrect: boolean; correctSequence: Color[] }) => {
+      console.log('📊 Result received:', data);
+      
+      set({
+        isInputPhase: false,
+        lastResult: {
+          isCorrect: data.isCorrect,
+          playerName: data.playerName,
+        },
+        message: data.isCorrect 
+          ? `✅ ${data.playerName} got it correct! Next round coming...`
+          : `❌ ${data.playerName} got it wrong. Correct: ${data.correctSequence.join(', ')}`,
       });
     });
     
@@ -118,6 +165,8 @@ export const useSimonStore = create<SimonStore>((set) => ({
     
     socket.off('simon:show_sequence');
     socket.off('simon:sequence_complete');
+    socket.off('simon:input_phase');
+    socket.off('simon:result');
     socket.off('simon:game_finished');
     socket.off('simon:player_eliminated');
     socket.off('simon:input_correct');
@@ -128,6 +177,10 @@ export const useSimonStore = create<SimonStore>((set) => ({
       isShowingSequence: false,
       currentSequence: [],
       currentRound: 1,
+      isInputPhase: false,
+      playerSequence: [],
+      canSubmit: false,
+      lastResult: null,
       message: 'Waiting for game to start...',
       isGameActive: false,
     });
@@ -142,8 +195,71 @@ export const useSimonStore = create<SimonStore>((set) => ({
       isShowingSequence: false,
       currentSequence: [],
       currentRound: 1,
+      isInputPhase: false,
+      playerSequence: [],
+      canSubmit: false,
+      lastResult: null,
       message: 'Waiting for game to start...',
       isGameActive: false,
+    });
+  },
+  
+  /**
+   * Add a color to the player's sequence
+   */
+  addColorToSequence: (color: Color) => {
+    set((state) => {
+      const newPlayerSequence = [...state.playerSequence, color];
+      const canSubmit = newPlayerSequence.length === state.currentSequence.length;
+      
+      return {
+        playerSequence: newPlayerSequence,
+        canSubmit,
+        message: canSubmit 
+          ? '✅ Sequence complete! Click Submit'
+          : `${newPlayerSequence.length} of ${state.currentSequence.length} colors`,
+      };
+    });
+  },
+  
+  /**
+   * Submit the player's sequence to the server
+   */
+  submitSequence: (gameCode: string, playerId: string) => {
+    const state = useSimonStore.getState();
+    
+    if (!state.canSubmit) {
+      console.warn('Cannot submit - sequence incomplete');
+      return;
+    }
+    
+    const socket = socketService.getSocket();
+    if (!socket) {
+      console.error('No socket connection');
+      return;
+    }
+    
+    console.log('📤 Submitting sequence:', state.playerSequence);
+    
+    socket.emit('simon:submit_sequence', {
+      gameCode,
+      playerId,
+      sequence: state.playerSequence,
+    });
+    
+    set({
+      message: 'Checking your answer...',
+      isInputPhase: false,
+    });
+  },
+  
+  /**
+   * Clear the player's sequence
+   */
+  clearPlayerSequence: () => {
+    set({
+      playerSequence: [],
+      canSubmit: false,
     });
   },
 }));

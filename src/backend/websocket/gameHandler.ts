@@ -17,6 +17,7 @@ import {
 import {
   initializeSimonGame,
   validateInput,
+  validateSequence,
   eliminatePlayer,
   advanceToNextRound,
   shouldGameEnd,
@@ -322,8 +323,71 @@ function registerGameHandlers(io: Server, socket: SocketWithSession): void {
   });
   
   /**
-   * Simon: Submit input (single color in sequence)
-   * For now (Step 1), this won't be used yet
+   * Simon: Submit complete sequence (Step 2)
+   */
+  socket.on('simon:submit_sequence', (data: { gameCode: string; playerId: string; sequence: Color[] }) => {
+    try {
+      const { gameCode, playerId, sequence } = data;
+      
+      // Verify room exists
+      const room = gameService.getRoom(gameCode);
+      if (!room || room.status !== 'active') {
+        return;
+      }
+      
+      // Get game state
+      const gameState = room.gameState as SimonGameState;
+      if (!gameState || gameState.gameType !== 'simon') {
+        return;
+      }
+      
+      // Verify player is still playing
+      const playerState = gameState.playerStates[playerId];
+      if (!playerState || playerState.status !== 'playing') {
+        return;
+      }
+      
+      // Get player info
+      const player = room.players.find(p => p.id === playerId);
+      
+      // Validate sequence
+      const isCorrect = validateSequence(gameState, sequence);
+      
+      // Broadcast result
+      io.to(gameCode).emit('simon:result', {
+        playerId,
+        playerName: player?.displayName || 'Unknown',
+        isCorrect,
+        correctSequence: gameState.sequence,
+      });
+      
+      if (isCorrect) {
+        console.log(`✅ Player ${playerId} answered correctly!`);
+        
+        // Wait a bit, then advance to next round
+        setTimeout(() => {
+          advanceSimonRound(io, gameCode);
+        }, 2000);
+      } else {
+        console.log(`❌ Player ${playerId} answered incorrectly`);
+        
+        // For Step 2: End game (later we'll add elimination)
+        setTimeout(() => {
+          const newState = eliminatePlayer(gameState, playerId, gameState.round);
+          gameService.updateGameState(gameCode, newState);
+          
+          // End the game
+          finishSimonGame(io, gameCode, newState, room);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('❌ simon:submit_sequence error:', error);
+    }
+  });
+  
+  /**
+   * Simon: Submit input (single color in sequence) - For Step 4 elimination
+   * This is the old per-color input, keeping for Step 4+
    */
   socket.on('simon:submit_input', (data: { gameCode: string; playerId: string; color: Color; inputIndex: number }) => {
     try {
@@ -546,15 +610,18 @@ function showSimonSequence(io: Server, gameCode: string, gameState: SimonGameSta
   // Each color shows for SHOW_COLOR_DURATION_MS + GAP
   const totalTime = sequence.length * (SIMON_CONSTANTS.SHOW_COLOR_DURATION_MS + SIMON_CONSTANTS.SHOW_COLOR_GAP_MS);
   
-  // After sequence completes, start input phase (for Step 2+)
-  // For Step 1, we'll just wait and then start next round automatically
+  // After sequence completes, start input phase (Step 2)
   setTimeout(() => {
     io.to(gameCode).emit('simon:sequence_complete');
     
-    // For Step 1: Auto-advance to next round for testing (remove this in Step 2)
+    // Wait 500ms, then enable input
     setTimeout(() => {
-      advanceSimonRound(io, gameCode);
-    }, 3000); // Wait 3 seconds, then next round
+      io.to(gameCode).emit('simon:input_phase', {
+        round: gameState.round,
+      });
+      
+      console.log(`🎮 Input phase started for round ${round}`);
+    }, 500);
   }, totalTime + 500);
 }
 
@@ -567,13 +634,6 @@ function advanceSimonRound(io: Server, gameCode: string): void {
   
   const gameState = room.gameState as SimonGameState;
   if (!gameState || gameState.gameType !== 'simon') return;
-  
-  // Check if we should stop for testing (Step 1: stop at round 5)
-  if (gameState.round >= 5) {
-    io.to(gameCode).emit('simon:sequence_complete');
-    console.log(`🛑 Stopping at round 5 for Step 1 testing`);
-    return;
-  }
   
   // Advance to next round
   const newState = advanceToNextRound(gameState);
