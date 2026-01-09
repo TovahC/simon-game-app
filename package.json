@@ -33,7 +33,6 @@
     "@vitest/coverage-v8": "^4.0.16",
     "@vitest/ui": "^4.0.16",
     "supertest": "^7.2.2",
-    "tsc-alias": "^1.8.16",
     "tsx": "^4.20.3",
     "vitest": "^4.0.16"
   },
@@ -51,6 +50,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "socket.io": "^4.8.1",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3",
     "uuid": "^11.1.0",
     "zod": "^3.25.62"
