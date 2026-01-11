@@ -169,7 +169,7 @@ export const PLATFORM_CONSTANTS = {
   ROOM_MAX_AGE_MS: 86400000,       // 24 hours
   
   // Validation
-  MIN_DISPLAY_NAME_LENGTH: 3,
+  MIN_DISPLAY_NAME_LENGTH: 1,
   MAX_DISPLAY_NAME_LENGTH: 12,
   VALID_AVATAR_IDS: ['1', '2', '3', '4', '5', '6', '7', '8'],
   

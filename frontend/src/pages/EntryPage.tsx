@@ -118,7 +118,7 @@ export function EntryPage() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="Enter your name"
-              minLength={3}
+              minLength={1}
               maxLength={12}
               required
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent text-sm sm:text-base"
