@@ -19,10 +19,8 @@ interface CircularSimonBoardProps {
   isShowingSequence: boolean;
   isInputPhase: boolean;
   playerSequence: Color[];
-  canSubmit: boolean;
-  lastResult: { isCorrect: boolean; playerName: string } | null;
+  lastResult?: { isCorrect: boolean; playerName: string } | null;
   onColorClick: (color: Color) => void;
-  onSubmit?: () => void; // Optional - kept for backwards compatibility
   disabled?: boolean;
   secondsRemaining: number;
   timerColor: 'green' | 'yellow' | 'red';
@@ -156,9 +154,7 @@ export const CircularSimonBoard: React.FC<CircularSimonBoardProps> = ({
   isShowingSequence,
   isInputPhase,
   playerSequence,
-  canSubmit,
   onColorClick,
-  onSubmit,
   disabled = false,
   secondsRemaining,
   timerColor,

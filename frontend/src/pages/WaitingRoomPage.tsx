@@ -30,7 +30,6 @@ export function WaitingRoomPage() {
     isShowingSequence,
     isInputPhase,
     playerSequence,
-    canSubmit,
     lastResult,
     message,
     secondsRemaining,
@@ -45,7 +44,6 @@ export function WaitingRoomPage() {
     initializeListeners,
     cleanup,
     addColorToSequence,
-    submitSequence,
     resetGame,
   } = useSimonStore();
   
@@ -337,14 +335,8 @@ export function WaitingRoomPage() {
             isShowingSequence={isShowingSequence}
             isInputPhase={isInputPhase}
             playerSequence={playerSequence}
-            canSubmit={canSubmit}
             lastResult={lastResult}
             onColorClick={addColorToSequence}
-            onSubmit={() => {
-              if (gameCode && playerId) {
-                submitSequence(gameCode, playerId);
-              }
-            }}
             disabled={isEliminated}
             secondsRemaining={secondsRemaining}
             timerColor={timerColor}
