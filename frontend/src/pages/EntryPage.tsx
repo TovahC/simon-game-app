@@ -1,7 +1,7 @@
 /**
  * Entry Page
  * 
- * Name + avatar selection page.
+ * Name entry page.
  * First screen players see.
  */
 
@@ -15,9 +15,11 @@ export function EntryPage() {
   const [mode, setMode] = useState<'create' | 'join' | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [gameCode, setGameCode] = useState('');
-  const [avatarId, setAvatarId] = useState('1');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  // Default avatar (no longer selectable)
+  const avatarId = '1';
   
   const { setSession } = useAuthStore();
   const navigate = useNavigate();
@@ -144,29 +146,6 @@ export function EntryPage() {
               />
             </div>
           )}
-          
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-              Avatar
-            </label>
-            <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
-              {['1', '2', '3', '4', '5', '6', '7', '8'].map((id) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setAvatarId(id)}
-                  className={`p-2.5 sm:p-4 rounded-lg border-2 transition-all duration-75 active:scale-95 min-h-[56px] min-w-[56px] ${
-                    avatarId === id
-                      ? 'border-purple-600 bg-purple-50'
-                      : 'border-gray-200 hover:border-gray-300 active:border-gray-400'
-                  }`}
-                  style={{ touchAction: 'manipulation' }}
-                >
-                  <span className="text-2xl sm:text-3xl">{['😀', '🎮', '🚀', '⚡', '🎨', '🎯', '🏆', '🌟'][parseInt(id) - 1]}</span>
-                </button>
-              ))}
-            </div>
-          </div>
           
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-800 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm">
