@@ -54,6 +54,14 @@ const ColorButton: React.FC<ColorButtonProps> = ({ color, isActive, onClick, dis
       filter: active ? 'brightness(1.5)' : 'brightness(1)',
     };
   };
+
+  // Colorblind-friendly symbols
+  const symbols: Record<Color, string> = {
+    red: '❤️',
+    blue: '🌊',
+    purple: '🌸',
+    green: '🌲',
+  };
   
   return (
     <button
@@ -65,6 +73,7 @@ const ColorButton: React.FC<ColorButtonProps> = ({ color, isActive, onClick, dis
         transition-all duration-200
         shadow-lg
         touch-action-manipulation
+        flex items-center justify-center
         ${disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer active:scale-95'}
       `}
       style={{
@@ -73,7 +82,7 @@ const ColorButton: React.FC<ColorButtonProps> = ({ color, isActive, onClick, dis
       }}
       aria-label={`${color} button`}
     >
-      <span className="sr-only">{color}</span>
+      <span className="text-4xl sm:text-5xl">{symbols[color]}</span>
     </button>
   );
 };
@@ -165,10 +174,10 @@ export const SimonBoard: React.FC<SimonBoardProps> = ({
   // Get color emoji for display
   const getColorEmoji = (color: Color): string => {
     const emojis: Record<Color, string> = {
-      red: '🔴',
-      blue: '🔵',
-      purple: '🟣',
-      green: '🟢',
+      red: '❤️',
+      blue: '🌊',
+      purple: '🌸',
+      green: '🌲',
     };
     return emojis[color];
   };

@@ -325,10 +325,10 @@ export const CircularSimonBoard: React.FC<CircularSimonBoardProps> = ({
   // Get color emoji
   const getColorEmoji = (color: Color): string => {
     const emojis: Record<Color, string> = {
-      red: '🔴',
-      blue: '🔵',
-      purple: '🟣',
-      green: '🟢',
+      red: '❤️',
+      blue: '🌊',
+      purple: '🌸',
+      green: '🌲',
     };
     return emojis[color];
   };
@@ -408,6 +408,33 @@ export const CircularSimonBoard: React.FC<CircularSimonBoardProps> = ({
               outerRadius={outerRadius}
             />
           ))}
+
+          {/* Colorblind-friendly symbols on each wedge */}
+          {wedges.map((wedge) => {
+            const midAngle = ((wedge.start + wedge.end) / 2) * (Math.PI / 180);
+            const symbolRadius = (innerRadius + outerRadius) / 2;
+            const symbolX = centerX + symbolRadius * Math.cos(midAngle);
+            const symbolY = centerY + symbolRadius * Math.sin(midAngle);
+            const symbols: Record<Color, string> = {
+              red: '❤️',
+              blue: '🌊',
+              purple: '🌸',
+              green: '🌲',
+            };
+            return (
+              <text
+                key={`symbol-${wedge.color}`}
+                x={symbolX}
+                y={symbolY}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize="28"
+                style={{ pointerEvents: 'none' }}
+              >
+                {symbols[wedge.color]}
+              </text>
+            );
+          })}
 
           {/* Center hub */}
           <circle
