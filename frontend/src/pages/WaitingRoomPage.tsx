@@ -291,13 +291,15 @@ export function WaitingRoomPage() {
         {/* Mute Button */}
         <MuteButton />
         
-        {/* End Game Button - Top Right */}
-        <button
-          onClick={handleEndGameEarly}
-          className="fixed top-4 right-4 z-50 bg-red-500/80 hover:bg-red-600 text-white text-xs font-medium px-3 py-2 rounded-lg shadow-lg transition-colors"
-        >
-          End Game
-        </button>
+        {/* End Game Button - Top Right (Host Only) */}
+        {isHost && (
+          <button
+            onClick={handleEndGameEarly}
+            className="fixed top-4 right-4 z-50 bg-red-500/80 hover:bg-red-600 text-white text-xs font-medium px-3 py-2 rounded-lg shadow-lg transition-colors"
+          >
+            End Game
+          </button>
+        )}
         
         <div className="flex flex-col items-center w-full max-w-md">
           {/* Step 4: Scoreboard */}
