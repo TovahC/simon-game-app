@@ -291,11 +291,11 @@ export function WaitingRoomPage() {
         {/* Mute Button */}
         <MuteButton />
         
-        {/* End Game Button - Top Right (Host Only) */}
+        {/* End Game Button - Top Right, left of Mute button (Host Only) */}
         {isHost && (
           <button
             onClick={handleEndGameEarly}
-            className="fixed top-4 right-4 z-50 bg-red-500/80 hover:bg-red-600 text-white text-xs font-medium px-3 py-2 rounded-lg shadow-lg transition-colors"
+            className="fixed top-4 right-20 z-50 bg-red-500/80 hover:bg-red-600 text-white text-xs font-medium px-3 py-2 rounded-lg shadow-lg transition-colors"
           >
             End Game
           </button>
