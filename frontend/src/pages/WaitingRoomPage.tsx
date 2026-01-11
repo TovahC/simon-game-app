@@ -210,17 +210,20 @@ export function WaitingRoomPage() {
     }
   };
   
-  // Handle Play Again
-  const handlePlayAgain = () => {
+  // Handle Play Again - restarts game immediately with same players
+  const handlePlayAgain = async () => {
+    // Initialize sound for the new game
+    await soundService.init();
+    
     // Reset local game state
     resetGame();
-    setRoomStatus('waiting');
+    setRoomStatus('countdown');
     
-    // Emit restart_game to reset room on server
+    // Emit restart_game with autoStart to reset and immediately start new game
     const socket = socketService.getSocket();
     if (socket && gameCode && playerId) {
-      console.log('🔄 Restarting game:', { gameCode, playerId });
-      socket.emit('restart_game', { gameCode, playerId });
+      console.log('🔄 Play Again - restarting game:', { gameCode, playerId });
+      socket.emit('restart_game', { gameCode, playerId, autoStart: true });
     }
   };
 

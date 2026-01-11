@@ -282,11 +282,12 @@ function registerPlatformHandlers(io: Server, socket: SocketWithSession): void {
 
   /**
    * Restart game (play again)
+   * If autoStart is true, immediately starts a new game with countdown
    */
-  socket.on('restart_game', (data: { gameCode: string; playerId: string }) => {
+  socket.on('restart_game', (data: { gameCode: string; playerId: string; autoStart?: boolean }) => {
     try {
-      const { gameCode, playerId } = data;
-      console.log(`🔄 restart_game: gameCode=${gameCode}, playerId=${playerId}`);
+      const { gameCode, playerId, autoStart } = data;
+      console.log(`🔄 restart_game: gameCode=${gameCode}, playerId=${playerId}, autoStart=${autoStart}`);
       
       // Verify room exists
       const room = gameService.getRoom(gameCode);
@@ -294,6 +295,13 @@ function registerPlatformHandlers(io: Server, socket: SocketWithSession): void {
         console.error(`❌ Room not found: ${gameCode}`);
         socket.emit('error', { message: 'Room not found' });
         return;
+      }
+      
+      // Clear any existing game timeouts
+      const existingTimeout = simonTimeouts.get(gameCode);
+      if (existingTimeout) {
+        clearTimeout(existingTimeout);
+        simonTimeouts.delete(gameCode);
       }
       
       // Reset room to waiting state
@@ -313,8 +321,17 @@ function registerPlatformHandlers(io: Server, socket: SocketWithSession): void {
         })),
       });
       
-      // Also emit game_restarted event so clients know to reset
+      // Emit game_restarted event so clients know to reset
       io.to(gameCode).emit('game_restarted', { gameCode });
+      
+      // If autoStart, immediately start a new game
+      if (autoStart) {
+        console.log(`🚀 Auto-starting new game for room: ${gameCode}`);
+        // Small delay to let clients reset their state
+        setTimeout(() => {
+          startCountdown(io, gameCode);
+        }, 500);
+      }
       
     } catch (error) {
       console.error('❌ restart_game error:', error);

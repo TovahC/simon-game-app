@@ -372,6 +372,13 @@ export const useSimonStore = create<SimonStore>((set, get) => ({
    * Reset game state
    */
   resetGame: () => {
+    // Stop any running timer
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    lastBeepSecond = null;
+    
     set({
       gameState: null,
       isShowingSequence: false,
@@ -380,6 +387,23 @@ export const useSimonStore = create<SimonStore>((set, get) => ({
       isInputPhase: false,
       playerSequence: [],
       canSubmit: false,
+      // Timer state
+      timeoutAt: null,
+      timeoutSeconds: 0,
+      secondsRemaining: 0,
+      timerColor: 'green',
+      isTimerPulsing: false,
+      // Multiplayer state
+      scores: {},
+      playerStatuses: {},
+      submittedPlayers: [],
+      isEliminated: false,
+      roundResult: null,
+      // Game Over state - MUST reset these for Play Again to work
+      isGameOver: false,
+      gameWinner: null,
+      finalScores: [],
+      // Result state
       lastResult: null,
       message: 'Waiting for game to start...',
       isGameActive: false,
