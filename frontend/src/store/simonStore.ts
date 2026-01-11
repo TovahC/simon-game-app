@@ -8,6 +8,7 @@ import { create } from 'zustand';
 import type { Color, SimonGameState } from '../shared/types';
 import { socketService } from '../services/socketService';
 import { soundService } from '../services/soundService';
+import { useAuthStore } from './authStore';
 
 // =============================================================================
 // TYPES
@@ -386,21 +387,45 @@ export const useSimonStore = create<SimonStore>((set, get) => ({
   },
   
   /**
-   * Add a color to the player's sequence
+   * Add a color to the player's sequence (auto-submits when complete)
    */
   addColorToSequence: (color: Color) => {
-    set((state) => {
-      const newPlayerSequence = [...state.playerSequence, color];
-      const canSubmit = newPlayerSequence.length === state.currentSequence.length;
-      
-      return {
-        playerSequence: newPlayerSequence,
-        canSubmit,
-        message: canSubmit 
-          ? '✅ Sequence complete! Click Submit'
-          : `${newPlayerSequence.length} of ${state.currentSequence.length} colors`,
-      };
+    const currentState = useSimonStore.getState();
+    const newPlayerSequence = [...currentState.playerSequence, color];
+    const isComplete = newPlayerSequence.length === currentState.currentSequence.length;
+    
+    set({
+      playerSequence: newPlayerSequence,
+      canSubmit: isComplete,
+      message: isComplete 
+        ? '✅ Submitting...'
+        : `${newPlayerSequence.length} of ${currentState.currentSequence.length} colors`,
     });
+    
+    // Auto-submit when sequence is complete
+    if (isComplete) {
+      // Small delay for visual feedback before submitting
+      setTimeout(() => {
+        const state = useSimonStore.getState();
+        const session = useAuthStore.getState().session;
+        
+        if (state.canSubmit && state.isInputPhase && session) {
+          const socket = socketService.getSocket();
+          if (socket) {
+            console.log('📤 Auto-submitting sequence:', state.playerSequence);
+            socket.emit('simon:submit_sequence', {
+              gameCode: session.gameCode,
+              playerId: session.playerId,
+              sequence: state.playerSequence,
+            });
+            set({
+              message: 'Checking your answer...',
+              isInputPhase: false,
+            });
+          }
+        }
+      }, 150);
+    }
   },
   
   /**
