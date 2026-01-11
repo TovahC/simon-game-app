@@ -32,7 +32,7 @@ interface SoundConfig {
 const COLOR_FREQUENCIES: Record<Color, number> = {
   green: 659.25,  // E5 - High
   red: 329.63,    // E4 - Low
-  yellow: 440.00, // A4 - Medium-high
+  purple: 440.00, // A4 - Medium-high
   blue: 277.18,   // C#4 - Medium-low
 };
 

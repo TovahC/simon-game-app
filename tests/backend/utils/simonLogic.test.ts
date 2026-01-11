@@ -89,7 +89,7 @@ describe('generateSequence', () => {
   });
 
   it('should only contain valid colors', () => {
-    const validColors: Color[] = ['red', 'blue', 'yellow', 'green'];
+    const validColors: Color[] = ['red', 'blue', 'purple', 'green'];
     const sequence = generateSequence(10);
 
     sequence.forEach(color => {

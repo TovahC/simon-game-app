@@ -106,7 +106,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
       const { rerender } = render(
         <CircularSimonBoard 
           {...defaultProps} 
-          sequence={['red', 'blue', 'yellow']} 
+          sequence={['red', 'blue', 'purple']} 
           isShowingSequence={true}
           round={3}
         />
@@ -131,7 +131,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
 
       // Third color (yellow) - 800ms - THIS WAS THE BUG: it stopped here before the fix
       await vi.advanceTimersByTimeAsync(800);
-      expect(soundService.soundService.playColor).toHaveBeenCalledWith('yellow', 0.8);
+      expect(soundService.soundService.playColor).toHaveBeenCalledWith('purple', 0.8);
 
       // Verify all three colors were played
       expect(soundService.soundService.playColor).toHaveBeenCalledTimes(3);
@@ -161,7 +161,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
       rerender(
         <CircularSimonBoard 
           {...defaultProps} 
-          sequence={['red', 'blue', 'yellow']} 
+          sequence={['red', 'blue', 'purple']} 
           isShowingSequence={true}
           round={3}
         />
@@ -186,7 +186,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
 
       // Third color - THIS IS THE CRITICAL TEST: should play all 3 colors
       await vi.advanceTimersByTimeAsync(800);
-      expect(soundService.soundService.playColor).toHaveBeenCalledWith('yellow', 0.8);
+      expect(soundService.soundService.playColor).toHaveBeenCalledWith('purple', 0.8);
 
       // Verify all three colors were played in round 3
       expect(soundService.soundService.playColor).toHaveBeenCalledTimes(3);
@@ -196,7 +196,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
       const { rerender } = render(
         <CircularSimonBoard 
           {...defaultProps} 
-          sequence={['red', 'blue', 'yellow', 'green']} 
+          sequence={['red', 'blue', 'purple', 'green']} 
           isShowingSequence={true}
         />
       );
@@ -204,7 +204,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
       await vi.advanceTimersByTimeAsync(500); // Initial delay
 
       // Play through all 4 colors
-      for (const color of ['red', 'blue', 'yellow', 'green'] as Color[]) {
+      for (const color of ['red', 'blue', 'purple', 'green'] as Color[]) {
         await vi.advanceTimersByTimeAsync(800); // Color duration
         expect(soundService.soundService.playColor).toHaveBeenCalledWith(color, 0.8);
         await vi.advanceTimersByTimeAsync(400); // Gap
@@ -217,7 +217,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
       const { rerender } = render(
         <CircularSimonBoard 
           {...defaultProps} 
-          sequence={['red', 'blue', 'yellow']} 
+          sequence={['red', 'blue', 'purple']} 
           isShowingSequence={true}
         />
       );
@@ -229,7 +229,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
       rerender(
         <CircularSimonBoard 
           {...defaultProps} 
-          sequence={['red', 'blue', 'yellow']} 
+          sequence={['red', 'blue', 'purple']} 
           isShowingSequence={false}
         />
       );
@@ -258,7 +258,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
       rerender(
         <CircularSimonBoard 
           {...defaultProps} 
-          sequence={['green', 'yellow']} 
+          sequence={['green', 'purple']} 
           isShowingSequence={true}
         />
       );
@@ -276,7 +276,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
       render(
         <CircularSimonBoard 
           {...defaultProps} 
-          sequence={['red', 'blue', 'yellow']} 
+          sequence={['red', 'blue', 'purple']} 
           isShowingSequence={true}
         />
       );

@@ -101,7 +101,7 @@ const ColorWedge: React.FC<WedgeProps> = ({
   const colors: Record<Color, { dim: string; bright: string }> = {
     green: { dim: '#1a7a28', bright: '#44ff66' },  // Dark green -> Neon green
     red: { dim: '#8b1a1a', bright: '#ff4444' },    // Dark red -> Bright red
-    yellow: { dim: '#8b7a00', bright: '#ffff00' }, // Dark yellow -> Pure yellow
+    purple: { dim: '#581c87', bright: '#c084fc' }, // Dark purple -> Bright purple
     blue: { dim: '#0a3d6b', bright: '#44aaff' },   // Dark blue -> Bright blue
   };
 
@@ -178,7 +178,7 @@ export const CircularSimonBoard: React.FC<CircularSimonBoardProps> = ({
   const wedges: { color: Color; start: number; end: number }[] = [
     { color: 'green', start: 180 + gapAngle / 2, end: 270 - gapAngle / 2 },   // Top Left
     { color: 'red', start: 270 + gapAngle / 2, end: 360 - gapAngle / 2 },      // Top Right
-    { color: 'yellow', start: 90 + gapAngle / 2, end: 180 - gapAngle / 2 },    // Bottom Left
+    { color: 'purple', start: 90 + gapAngle / 2, end: 180 - gapAngle / 2 },    // Bottom Left
     { color: 'blue', start: 0 + gapAngle / 2, end: 90 - gapAngle / 2 },        // Bottom Right
   ];
 
@@ -331,7 +331,7 @@ export const CircularSimonBoard: React.FC<CircularSimonBoardProps> = ({
     const emojis: Record<Color, string> = {
       red: '🔴',
       blue: '🔵',
-      yellow: '🟡',
+      purple: '🟣',
       green: '🟢',
     };
     return emojis[color];

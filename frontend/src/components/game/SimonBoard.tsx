@@ -46,7 +46,7 @@ const ColorButton: React.FC<ColorButtonProps> = ({ color, isActive, onClick, dis
     const colors = {
       red: { base: '#ef4444', light: '#fca5a5', hover: '#dc2626' },
       blue: { base: '#3b82f6', light: '#93c5fd', hover: '#2563eb' },
-      yellow: { base: '#facc15', light: '#fef08a', hover: '#eab308' },
+      purple: { base: '#a855f7', light: '#d8b4fe', hover: '#9333ea' },
       green: { base: '#22c55e', light: '#86efac', hover: '#16a34a' },
     };
     
@@ -171,7 +171,7 @@ export const SimonBoard: React.FC<SimonBoardProps> = ({
     const emojis: Record<Color, string> = {
       red: '🔴',
       blue: '🔵',
-      yellow: '🟡',
+      purple: '🟣',
       green: '🟢',
     };
     return emojis[color];
@@ -247,11 +247,11 @@ export const SimonBoard: React.FC<SimonBoardProps> = ({
           disabled={disabled || isShowingSequence}
         />
         
-        {/* Bottom Row: Yellow, Green */}
+        {/* Bottom Row: Purple, Green */}
         <ColorButton
-          color="yellow"
-          isActive={activeColor === 'yellow'}
-          onClick={() => handleColorClick('yellow')}
+          color="purple"
+          isActive={activeColor === 'purple'}
+          onClick={() => handleColorClick('purple')}
           disabled={disabled || isShowingSequence}
         />
         <ColorButton
