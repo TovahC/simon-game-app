@@ -49,7 +49,7 @@ describe('Color Race Logic', () => {
     it('should set a random current color', () => {
       const state = initializeColorRaceGame(mockPlayers);
       
-      expect(['red', 'blue', 'purple', 'green']).toContain(state.currentColor);
+      expect(['red', 'blue', 'purple', 'green', 'yellow']).toContain(state.currentColor);
     });
 
     it('should set total rounds to 5', () => {
@@ -73,7 +73,7 @@ describe('Color Race Logic', () => {
     it('should return a valid color', () => {
       const color = getRandomColor();
       
-      expect(['red', 'blue', 'purple', 'green']).toContain(color);
+      expect(['red', 'blue', 'purple', 'green', 'yellow']).toContain(color);
     });
 
     it('should return different colors over multiple calls (statistical)', () => {

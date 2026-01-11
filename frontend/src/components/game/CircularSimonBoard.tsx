@@ -101,6 +101,7 @@ const ColorWedge: React.FC<WedgeProps> = ({
     red: { dim: '#8b1a1a', bright: '#ff4444' },    // Dark red -> Bright red
     purple: { dim: '#581c87', bright: '#c084fc' }, // Dark purple -> Bright purple
     blue: { dim: '#0a3d6b', bright: '#44aaff' },   // Dark blue -> Bright blue
+    yellow: { dim: '#8b7a00', bright: '#ffff00' }, // Dark yellow -> Bright yellow
   };
 
   const wedgeColor = colors[color];
@@ -168,14 +169,16 @@ export const CircularSimonBoard: React.FC<CircularSimonBoardProps> = ({
   const centerY = size / 2;
   const outerRadius = size / 2 - 10; // Leave margin for stroke
   const innerRadius = size * 0.18; // Center hub size
-  const gapAngle = 4; // Gap between wedges in degrees
+  const gapAngle = 3; // Gap between wedges in degrees (slightly smaller for 5 wedges)
+  const wedgeArc = (360 - 5 * gapAngle) / 5; // Each wedge arc = ~69.4 degrees
 
-  // Wedge angles (with gaps)
+  // Wedge angles (with gaps) - 5 colors evenly distributed
   const wedges: { color: Color; start: number; end: number }[] = [
-    { color: 'green', start: 180 + gapAngle / 2, end: 270 - gapAngle / 2 },   // Top Left
-    { color: 'red', start: 270 + gapAngle / 2, end: 360 - gapAngle / 2 },      // Top Right
-    { color: 'purple', start: 90 + gapAngle / 2, end: 180 - gapAngle / 2 },    // Bottom Left
-    { color: 'blue', start: 0 + gapAngle / 2, end: 90 - gapAngle / 2 },        // Bottom Right
+    { color: 'yellow', start: -36 + gapAngle / 2, end: 36 - gapAngle / 2 },      // Top (centered at 0°)
+    { color: 'green', start: 36 + gapAngle / 2, end: 108 - gapAngle / 2 },       // Top Right
+    { color: 'blue', start: 108 + gapAngle / 2, end: 180 - gapAngle / 2 },       // Bottom Right  
+    { color: 'purple', start: 180 + gapAngle / 2, end: 252 - gapAngle / 2 },     // Bottom Left
+    { color: 'red', start: 252 + gapAngle / 2, end: 324 - gapAngle / 2 },        // Top Left
   ];
 
   // Track which color in sequence is being shown
@@ -329,6 +332,7 @@ export const CircularSimonBoard: React.FC<CircularSimonBoardProps> = ({
       blue: '🌊',
       purple: '🌸',
       green: '🌲',
+      yellow: '☀️',
     };
     return emojis[color];
   };
@@ -420,6 +424,7 @@ export const CircularSimonBoard: React.FC<CircularSimonBoardProps> = ({
               blue: '🌊',
               purple: '🌸',
               green: '🌲',
+              yellow: '☀️',
             };
             return (
               <text
@@ -428,7 +433,7 @@ export const CircularSimonBoard: React.FC<CircularSimonBoardProps> = ({
                 y={symbolY}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fontSize="28"
+                fontSize="24"
                 style={{ pointerEvents: 'none' }}
               >
                 {symbols[wedge.color]}

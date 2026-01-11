@@ -204,7 +204,7 @@ describe('CircularSimonBoard - Sequence Animation', () => {
       await vi.advanceTimersByTimeAsync(500); // Initial delay
 
       // Play through all 4 colors
-      for (const color of ['red', 'blue', 'purple', 'green'] as Color[]) {
+      for (const color of ['red', 'blue', 'purple', 'green', 'yellow'] as Color[]) {
         await vi.advanceTimersByTimeAsync(800); // Color duration
         expect(soundService.soundService.playColor).toHaveBeenCalledWith(color, 0.8);
         await vi.advanceTimersByTimeAsync(400); // Gap

@@ -46,6 +46,7 @@ const ColorButton: React.FC<ColorButtonProps> = ({ color, isActive, onClick, dis
       blue: { base: '#3b82f6', light: '#93c5fd', hover: '#2563eb' },
       purple: { base: '#a855f7', light: '#d8b4fe', hover: '#9333ea' },
       green: { base: '#22c55e', light: '#86efac', hover: '#16a34a' },
+      yellow: { base: '#facc15', light: '#fef08a', hover: '#eab308' },
     };
     
     return {
@@ -61,6 +62,7 @@ const ColorButton: React.FC<ColorButtonProps> = ({ color, isActive, onClick, dis
     blue: '🌊',
     purple: '🌸',
     green: '🌲',
+    yellow: '☀️',
   };
   
   return (
@@ -68,7 +70,7 @@ const ColorButton: React.FC<ColorButtonProps> = ({ color, isActive, onClick, dis
       onClick={onClick}
       disabled={disabled}
       className={`
-        w-[min(40vw,140px)] h-[min(40vw,140px)] sm:w-44 sm:h-44 md:w-48 md:h-48 
+        w-[min(28vw,100px)] h-[min(28vw,100px)] sm:w-32 sm:h-32 md:w-36 md:h-36 
         rounded-xl sm:rounded-2xl 
         transition-all duration-200
         shadow-lg
@@ -82,7 +84,7 @@ const ColorButton: React.FC<ColorButtonProps> = ({ color, isActive, onClick, dis
       }}
       aria-label={`${color} button`}
     >
-      <span className="text-4xl sm:text-5xl">{symbols[color]}</span>
+      <span className="text-3xl sm:text-4xl">{symbols[color]}</span>
     </button>
   );
 };
@@ -178,6 +180,7 @@ export const SimonBoard: React.FC<SimonBoardProps> = ({
       blue: '🌊',
       purple: '🌸',
       green: '🌲',
+      yellow: '☀️',
     };
     return emojis[color];
   };
@@ -236,35 +239,45 @@ export const SimonBoard: React.FC<SimonBoardProps> = ({
         </div>
       )}
       
-      {/* Color Grid (2x2) */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 p-3 sm:p-5 md:p-6 bg-gray-800 rounded-2xl sm:rounded-3xl shadow-2xl w-full">
-        {/* Top Row: Red, Blue */}
-        <ColorButton
-          color="red"
-          isActive={activeColor === 'red'}
-          onClick={() => handleColorClick('red')}
-          disabled={disabled || isShowingSequence}
-        />
-        <ColorButton
-          color="blue"
-          isActive={activeColor === 'blue'}
-          onClick={() => handleColorClick('blue')}
-          disabled={disabled || isShowingSequence}
-        />
+      {/* Color Grid (5 buttons: 3 on top, 2 on bottom) */}
+      <div className="flex flex-col gap-2 sm:gap-3 p-3 sm:p-5 md:p-6 bg-gray-800 rounded-2xl sm:rounded-3xl shadow-2xl w-full">
+        {/* Top Row: Red, Yellow, Blue */}
+        <div className="flex justify-center gap-2 sm:gap-3">
+          <ColorButton
+            color="red"
+            isActive={activeColor === 'red'}
+            onClick={() => handleColorClick('red')}
+            disabled={disabled || isShowingSequence}
+          />
+          <ColorButton
+            color="yellow"
+            isActive={activeColor === 'yellow'}
+            onClick={() => handleColorClick('yellow')}
+            disabled={disabled || isShowingSequence}
+          />
+          <ColorButton
+            color="blue"
+            isActive={activeColor === 'blue'}
+            onClick={() => handleColorClick('blue')}
+            disabled={disabled || isShowingSequence}
+          />
+        </div>
         
-        {/* Bottom Row: Purple, Green */}
-        <ColorButton
-          color="purple"
-          isActive={activeColor === 'purple'}
-          onClick={() => handleColorClick('purple')}
-          disabled={disabled || isShowingSequence}
-        />
-        <ColorButton
-          color="green"
-          isActive={activeColor === 'green'}
-          onClick={() => handleColorClick('green')}
-          disabled={disabled || isShowingSequence}
-        />
+        {/* Bottom Row: Purple, Green (centered) */}
+        <div className="flex justify-center gap-2 sm:gap-3">
+          <ColorButton
+            color="purple"
+            isActive={activeColor === 'purple'}
+            onClick={() => handleColorClick('purple')}
+            disabled={disabled || isShowingSequence}
+          />
+          <ColorButton
+            color="green"
+            isActive={activeColor === 'green'}
+            onClick={() => handleColorClick('green')}
+            disabled={disabled || isShowingSequence}
+          />
+        </div>
       </div>
       
       {/* Player Sequence Display (Step 2) */}

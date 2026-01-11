@@ -12,12 +12,12 @@
 /**
  * Available colors in both games
  */
-export type Color = 'red' | 'blue' | 'purple' | 'green';
+export type Color = 'red' | 'blue' | 'purple' | 'green' | 'yellow';
 
 /**
  * All available colors
  */
-export const COLORS: Color[] = ['red', 'blue', 'purple', 'green'];
+export const COLORS: Color[] = ['red', 'blue', 'purple', 'green', 'yellow'];
 
 // =============================================================================
 // COLOR RACE TYPES (Dummy Game)

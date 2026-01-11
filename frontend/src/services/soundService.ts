@@ -34,6 +34,7 @@ const COLOR_FREQUENCIES: Record<Color, number> = {
   red: 329.63,    // E4 - Low
   purple: 440.00, // A4 - Medium-high
   blue: 277.18,   // C#4 - Medium-low
+  yellow: 554.37, // C#5 - High-medium
 };
 
 // Sound configs for different events
