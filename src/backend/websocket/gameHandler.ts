@@ -321,6 +321,65 @@ function registerPlatformHandlers(io: Server, socket: SocketWithSession): void {
       socket.emit('error', { message: 'Failed to restart game' });
     }
   });
+
+  /**
+   * End game early (any player can trigger)
+   */
+  socket.on('end_game_early', (data: { gameCode: string; playerId: string }) => {
+    try {
+      const { gameCode, playerId } = data;
+      console.log(`🛑 end_game_early: gameCode=${gameCode}, playerId=${playerId}`);
+      
+      // Verify room exists
+      const room = gameService.getRoom(gameCode);
+      if (!room) {
+        console.error(`❌ Room not found: ${gameCode}`);
+        socket.emit('error', { message: 'Room not found' });
+        return;
+      }
+      
+      // Get game state
+      const gameState = room.gameState as SimonGameState;
+      if (!gameState || gameState.gameType !== 'simon') {
+        socket.emit('error', { message: 'No active game to end' });
+        return;
+      }
+      
+      // Clear any pending timeouts
+      const existingTimeout = simonTimeouts.get(gameCode);
+      if (existingTimeout) {
+        clearTimeout(existingTimeout);
+        simonTimeouts.delete(gameCode);
+      }
+      
+      // Calculate final scores
+      const playerScores = Object.entries(gameState.scores)
+        .map(([pid, score]) => {
+          const player = room.players.find((p: Player) => p.id === pid);
+          return {
+            playerId: pid,
+            name: player?.displayName || 'Unknown',
+            score,
+          };
+        })
+        .sort((a, b) => b.score - a.score);
+      
+      const winner = playerScores[0] || { playerId: '', name: 'No winner', score: 0 };
+      
+      // Emit game finished
+      io.to(gameCode).emit('simon:game_finished', {
+        winner,
+        finalScores: playerScores,
+      });
+      
+      gameService.updateRoomStatus(gameCode, 'finished');
+      console.log(`🛑 Game ended early in room ${gameCode} by player ${playerId}`);
+      
+    } catch (error) {
+      console.error('❌ end_game_early error:', error);
+      socket.emit('error', { message: 'Failed to end game' });
+    }
+  });
 }
 
 // =============================================================================
