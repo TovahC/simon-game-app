@@ -170,9 +170,8 @@ export const CircularSimonBoard: React.FC<CircularSimonBoardProps> = ({
   const outerRadius = size / 2 - 10; // Leave margin for stroke
   const innerRadius = size * 0.18; // Center hub size
   const gapAngle = 3; // Gap between wedges in degrees (slightly smaller for 5 wedges)
-  const wedgeArc = (360 - 5 * gapAngle) / 5; // Each wedge arc = ~69.4 degrees
 
-  // Wedge angles (with gaps) - 5 colors evenly distributed
+  // Wedge angles (with gaps) - 5 colors evenly distributed (72° each)
   const wedges: { color: Color; start: number; end: number }[] = [
     { color: 'yellow', start: -36 + gapAngle / 2, end: 36 - gapAngle / 2 },      // Top (centered at 0°)
     { color: 'green', start: 36 + gapAngle / 2, end: 108 - gapAngle / 2 },       // Top Right
